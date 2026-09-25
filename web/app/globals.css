@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf6ee;
+  --foreground: #1f2a1f;
+  --primary: #2f7d3b;
+  --primary-foreground: #faf0e6;
+  --secondary: #5b4636;
+  --secondary-foreground: #faf0e6;
+  --muted: #efe7d8;
+  --border: #e0d6c2;
+  --card: #fffdf7;
+  --accent: #9a6f1f;
+  --muted-foreground: #6b6455;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --animate-fade-in: fade-in 0.8s ease-out both;
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #404040;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn:hover {
+  background: rgba(115, 115, 115, 0.2);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.neomorph-card {
+  box-shadow:
+    6px 6px 14px rgba(120, 100, 60, 0.12),
+    -6px -6px 14px rgba(255, 255, 255, 0.8);
+}
+.neomorph-inset {
+  box-shadow:
+    inset 3px 3px 7px rgba(120, 100, 60, 0.15),
+    inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+}
+.neomorph-hover:hover {
+  box-shadow:
+    3px 3px 8px rgba(120, 100, 60, 0.12),
+    -3px -3px 8px rgba(255, 255, 255, 0.8);
+}
