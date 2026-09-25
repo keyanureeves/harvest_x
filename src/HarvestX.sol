@@ -41,13 +41,13 @@ contract HarvestX is Ownable {
     uint256 public constant TOKENS_PER_10KG = 1e18; // 1 OWG per 10kg
     uint256 public constant CO2_PER_KG = 400e18; //grams of CO2e per kg (with 18 decimals)
     uint256 public constant GRAMS_PER_TON = 1e6; // 1 ton = 1,000,000 grams
-    uint256 public constant CO2_GRAMS_PER_TON = 1e3 * CO2_PER_KG; // 400,000e18 = CO2 in "grams" per ton
+    uint256 public constant CO2_GRAMS_PER_TON = GRAMS_PER_TON * 1e18; // 1,000,000e18 = grams CO2e in 1 metric ton (1 ton = 1,000,000 g)
 
     //other state variables
     uint256 public totalFarmers;
     uint256 public globalWasteKg;
     uint256 public globalCO2Saved; //grams
-    uint256 public totalCarbonCreditsSold; //tons
+    uint256 public totalCarbonCreditsSold; // hundredths of a metric ton
 
     //price related variables
     uint256 minPricePerTon = 100e8;
@@ -291,7 +291,7 @@ contract HarvestX is Ownable {
         emit ProductClaimed(msg.sender, _productKg, tokens, block.timestamp);
     }
 
-    //tonsCO2 is in hundredths (e.g 1.5 tons = 150) //this is a problem
+    //_tonsCO2 is in hundredths of a metric ton (e.g 1.5 tons = 150)
     function buyCarbonCredits(
         address _farmer,
         uint256 _tonsCO2,
@@ -334,6 +334,7 @@ contract HarvestX is Ownable {
         //mark credits as sold
         carbonCreditsClaimed[_farmer] += _creditsToBuy;
         corporateCreditsPurchased[msg.sender] += _creditsToBuy;
+        totalCarbonCreditsSold += _tonsCO2; // hundredths of a metric ton
 
         //transfer USDC payment to farmer
         require(
@@ -497,7 +498,7 @@ contract HarvestX is Ownable {
         if (available > 0) {
             uint256 pricePerTonUSD = priceOracle.getCarbonCreditPricePerTon();
             uint256 estimatedValueUSD = (available * pricePerTonUSD) / 100;
-            estimatedValueUSDC = (estimatedValueUSD * 1e6) / 1e18;
+            estimatedValueUSDC = (estimatedValueUSD * 1e6) / 1e8;
         }
     }
 
