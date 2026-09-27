@@ -458,6 +458,15 @@ export default function BalancePage() {
                 </div>
               )}
 
+              {redeem.isStatusError && (
+                <div className="mt-4 p-4 rounded-xl bg-destructive/10 border border-destructive/40">
+                  <p className="text-sm text-destructive">
+                    Could not verify redemption eligibility. Check that you are
+                    on Sepolia and try again.
+                  </p>
+                </div>
+              )}
+
               {redeem.error && (
                 <div className="mt-4 p-4 rounded-xl bg-destructive/10 border border-destructive/40">
                   <p className="text-sm text-destructive break-all">
@@ -480,6 +489,7 @@ export default function BalancePage() {
                 disabled={
                   !isVerified ||
                   !redeem.canRedeem ||
+                  redeem.isStatusLoading ||
                   redeem.isSwitching ||
                   redeem.isPending ||
                   redeem.isConfirming ||
