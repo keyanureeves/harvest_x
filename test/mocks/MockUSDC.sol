@@ -22,19 +22,19 @@ contract MockUSDC is ERC20, Ownable {
 
     //One -time faucet (prevents abuse)
     function quickFaucet() external {
-      uint256 amount = 10_000 * 10**6;
-      require(balanceOf(address(this)) >= amount, "Out of funds");
-      _transfer(address(this), msg.sender, amount);
-      emit FaucetDispensed(msg.sender, amount);
+        uint256 amount = 10_000 * 10 ** 6;
+        require(balanceOf(address(this)) >= amount, "Out of funds");
+        _transfer(address(this), msg.sender, amount);
+        emit FaucetDispensed(msg.sender, amount);
     }
 
     //refill the faucet
     function refillFaucet(uint256 amount) external onlyOwner {
-      _mint(address(this),amount);
+        _mint(address(this), amount);
     }
 
     //public mint function for testing
-    function mint(address to,uint256 amount) external onlyOwner {
-      _mint(to, amount);
+    function mint(address to, uint256 amount) external onlyOwner {
+        _mint(to, amount);
     }
 }

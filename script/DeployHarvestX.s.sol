@@ -27,30 +27,19 @@ contract DeployHarvestX is Script {
 
         vm.startBroadcast();
         HarvestXToken hxToken = new HarvestXToken();
-        HarvestX harvestX = new HarvestX(
-            address(hxToken),
-            address(mockPriceOracle),
-            address(mockUSDC)
-        );
+        HarvestX harvestX = new HarvestX(address(hxToken), address(mockPriceOracle), address(mockUSDC));
         hxToken.transferOwnership(address(harvestX)); //HarvestX must own the token to mint rewards
         vm.stopBroadcast();
 
-        Deployment memory deployment = Deployment({
-            harvestX: harvestX,
-            hxToken: hxToken,
-            mockUSDC: mockUSDC,
-            mockPriceOracle: mockPriceOracle
-        });
+        Deployment memory deployment =
+            Deployment({harvestX: harvestX, hxToken: hxToken, mockUSDC: mockUSDC, mockPriceOracle: mockPriceOracle});
 
         return deployment;
     }
 
     // Deploys the mock dependencies on the active chain and returns them so
     // the caller (constructor wiring, scripts, frontend) can use the addresses.
-    function deployMocks()
-        public
-        returns (MockUSDC mockUSDC, MockPriceOracle mockPriceOracle)
-    {
+    function deployMocks() public returns (MockUSDC mockUSDC, MockPriceOracle mockPriceOracle) {
         vm.startBroadcast();
         mockUSDC = new MockUSDC();
         mockPriceOracle = new MockPriceOracle();

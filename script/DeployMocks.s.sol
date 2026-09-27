@@ -28,10 +28,6 @@ contract DeployMocks is Script {
         console.log("MockUSDC deployed at:", address(usdc));
         console.log("MockPriceOracle deployed at:", address(priceOracle));
 
-        return
-            MockAddresses({
-                usdc: address(usdc),
-                priceOracle: address(priceOracle)
-            });
+        return MockAddresses({usdc: address(usdc), priceOracle: address(priceOracle)});
     }
 }

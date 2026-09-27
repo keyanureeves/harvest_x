@@ -37,11 +37,7 @@ contract HarvestXTest is Test {
         hxToken = new HarvestXToken();
         priceOracle = new MockPriceOracle();
         usdc = new MockUSDC();
-        harvestX = new HarvestX(
-            address(hxToken),
-            address(priceOracle),
-            address(usdc)
-        );
+        harvestX = new HarvestX(address(hxToken), address(priceOracle), address(usdc));
         hxToken.transferOwnership(address(harvestX));
         vm.stopBroadcast();
 
@@ -70,7 +66,7 @@ contract HarvestXTest is Test {
     function testRegisterFarmer() public {
         vm.prank(USER);
         harvestX.register();
-        (bool isRegistered, , , , , ) = harvestX.farmers(USER);
+        (bool isRegistered,,,,,) = harvestX.farmers(USER);
         assertTrue(isRegistered);
         assertEq(harvestX.totalFarmers(), 1);
     }
@@ -133,7 +129,7 @@ contract HarvestXTest is Test {
         uint256 expectedCO2Grams = WASTE_KG * 400e18;
         // getAvailableCarbonCredits returns hundredths of a metric ton:
         // 100kg * 400e18 = 40,000e18 grams = 0.04 metric tons => 4 hundredths.
-        (, uint256 earned, , ) = harvestX.getAvailableCarbonCredits(USER);
+        (, uint256 earned,,) = harvestX.getAvailableCarbonCredits(USER);
         assertEq(earned, 4);
         assertEq(harvestX.globalCO2Saved(), expectedCO2Grams);
         assertEq(harvestX.globalWasteKg(), WASTE_KG);
@@ -268,8 +264,7 @@ contract HarvestXTest is Test {
     // CHECK REDEMPTION STATUS - view
     // Unregistered caller gets a clear rejection reason.
     function testCheckRedemptionStatusNotRegistered() public {
-        (bool can, string memory reason, , , , , ) = harvestX
-            .checkRedemptionStatus(1e18);
+        (bool can, string memory reason,,,,,) = harvestX.checkRedemptionStatus(1e18);
         assertFalse(can);
         assertEq(reason, "Not registered as a farmer");
     }
@@ -279,8 +274,7 @@ contract HarvestXTest is Test {
         vm.prank(USER);
         harvestX.register();
         vm.prank(USER);
-        (bool can, string memory reason, , , , , ) = harvestX
-            .checkRedemptionStatus(1e18);
+        (bool can, string memory reason,,,,,) = harvestX.checkRedemptionStatus(1e18);
         assertFalse(can);
         assertEq(reason, "Farmer not verified");
     }
@@ -298,8 +292,7 @@ contract HarvestXTest is Test {
         usdc.mint(address(harvestX), 1_000e6);
 
         vm.prank(USER);
-        (bool can, string memory reason, uint256 usdcAmount, , , , ) = harvestX
-            .checkRedemptionStatus(10e18);
+        (bool can, string memory reason, uint256 usdcAmount,,,,) = harvestX.checkRedemptionStatus(10e18);
         assertTrue(can);
         assertEq(reason, "Ready to redeem");
         assertEq(usdcAmount, 10e6);
@@ -514,14 +507,8 @@ contract HarvestXTest is Test {
         harvestX.processWaste(WASTE_KG, WASTE_TYPE, WORKERS, PAYMENT_KES);
         vm.stopPrank();
 
-        (
-            uint256 farmersCount,
-            uint256 wasteKg,
-            uint256 co2SavedKg,
-            uint256 tokensCirculating,
-            ,
-
-        ) = harvestX.getGlobalStats();
+        (uint256 farmersCount, uint256 wasteKg, uint256 co2SavedKg, uint256 tokensCirculating,,) =
+            harvestX.getGlobalStats();
 
         assertEq(farmersCount, 1);
         assertEq(wasteKg, WASTE_KG);
@@ -537,9 +524,7 @@ contract HarvestXTest is Test {
         harvestX.processWaste(WASTE_KG, WASTE_TYPE, WORKERS, PAYMENT_KES);
         vm.stopPrank();
 
-        HarvestX.WasteCollection[] memory history = harvestX.getWastehistory(
-            USER
-        );
+        HarvestX.WasteCollection[] memory history = harvestX.getWastehistory(USER);
         assertEq(history.length, 1);
         assertEq(history[0].kgCollected, WASTE_KG);
         assertEq(history[0].workersInvolved, WORKERS);
@@ -549,18 +534,14 @@ contract HarvestXTest is Test {
 
     // getWorkerPayments returns empty until worker payments are recorded.
     function testGetWorkerPayments() public view {
-        HarvestX.WorkerPayment[] memory payments = harvestX.getWorkerPayments(
-            USER
-        );
+        HarvestX.WorkerPayment[] memory payments = harvestX.getWorkerPayments(USER);
         assertEq(payments.length, 0);
     }
 
     // calculatePriceInUSDC converts tons (hundredths) to USD and USDC.
     // 100 (1 ton) * 100 USD/ton = 10000 USD... /100 = 100 USD => 100 USDC.
     function testCalculatePriceInUSDC() public {
-        (uint256 priceUSD, uint256 priceUSDC) = harvestX.calculatePriceInUSDC(
-            100
-        );
+        (uint256 priceUSD, uint256 priceUSDC) = harvestX.calculatePriceInUSDC(100);
         assertEq(priceUSD, 100e8);
         assertEq(priceUSDC, 100e6);
     }
@@ -573,8 +554,7 @@ contract HarvestXTest is Test {
         harvestX.processWaste(2500, WASTE_TYPE, WORKERS, PAYMENT_KES);
         vm.stopPrank();
 
-        (uint256 available, uint256 earned, uint256 sold, ) = harvestX
-            .getAvailableCarbonCredits(USER);
+        (uint256 available, uint256 earned, uint256 sold,) = harvestX.getAvailableCarbonCredits(USER);
         assertEq(available, 100); // 1.00 ton in hundredths
         assertEq(earned, 100);
         assertEq(sold, 0);

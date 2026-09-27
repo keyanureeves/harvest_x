@@ -60,9 +60,8 @@ contract HelperConfig is Script {
 
     function getAnvilEthConfig() public returns (NetworkConfig memory) {
         if (
-            activeNetworkConfig.hxToken != address(0) ||
-            activeNetworkConfig.priceOracle != address(0) ||
-            activeNetworkConfig.usdc != address(0)
+            activeNetworkConfig.hxToken != address(0) || activeNetworkConfig.priceOracle != address(0)
+                || activeNetworkConfig.usdc != address(0)
         ) {
             return activeNetworkConfig;
         }

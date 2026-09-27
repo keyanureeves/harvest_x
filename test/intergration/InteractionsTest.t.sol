@@ -37,11 +37,7 @@ contract InteractionsTest is Test {
         hxToken = new HarvestXToken();
         priceOracle = new MockPriceOracle();
         usdc = new MockUSDC();
-        harvestX = new HarvestX(
-            address(hxToken),
-            address(priceOracle),
-            address(usdc)
-        );
+        harvestX = new HarvestX(address(hxToken), address(priceOracle), address(usdc));
         hxToken.transferOwnership(address(harvestX));
         vm.stopBroadcast();
 
@@ -55,9 +51,7 @@ contract InteractionsTest is Test {
         RegisterHarvestX registerScript = new RegisterHarvestX();
         registerScript.register(address(harvestX));
 
-        (bool isRegistered, , , , , ) = harvestX.farmers(
-            address(registerScript)
-        );
+        (bool isRegistered,,,,,) = harvestX.farmers(address(registerScript));
         assertTrue(isRegistered);
         assertEq(harvestX.totalFarmers(), 1);
     }
@@ -114,9 +108,7 @@ contract InteractionsTest is Test {
 
         // farmer earned 1 ton of credits from 2500kg of waste
         assertEq(hxToken.balanceOf(USER), 250e18);
-        (uint256 availableBefore, , , ) = harvestX.getAvailableCarbonCredits(
-            USER
-        );
+        (uint256 availableBefore,,,) = harvestX.getAvailableCarbonCredits(USER);
         assertEq(availableBefore, 100); // 1.00 ton in hundredths
 
         //----- 2. buyer side
@@ -136,9 +128,7 @@ contract InteractionsTest is Test {
         assertEq(harvestX.getCorporatePurchases(BUYER), 1_000_000e18);
 
         // farmer's credits are now fully sold
-        (uint256 availableAfter, , , ) = harvestX.getAvailableCarbonCredits(
-            USER
-        );
+        (uint256 availableAfter,,,) = harvestX.getAvailableCarbonCredits(USER);
         assertEq(availableAfter, 0);
 
         //----- 3. redemption

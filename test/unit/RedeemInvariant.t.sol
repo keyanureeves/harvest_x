@@ -21,11 +21,7 @@ contract RedeemInvariantTest is Test {
     function setUp() public {
         hxToken = new HarvestXToken();
         usdc = new MockUSDC();
-        harvestX = new HarvestX(
-            address(hxToken),
-            address(new MockPriceOracle()),
-            address(usdc)
-        );
+        harvestX = new HarvestX(address(hxToken), address(new MockPriceOracle()), address(usdc));
         hxToken.transferOwnership(address(harvestX));
     }
 
@@ -91,15 +87,7 @@ contract RedeemInvariantTest is Test {
         usdc.mint(address(harvestX), 1_000e6);
 
         vm.prank(farmer);
-        (
-            bool can,
-            string memory reason,
-            uint256 usdcAmount,
-            ,
-            ,
-            ,
-            
-        ) = harvestX.checkRedemptionStatus(10e18);
+        (bool can, string memory reason, uint256 usdcAmount,,,,) = harvestX.checkRedemptionStatus(10e18);
         assertTrue(can);
         assertEq(reason, "Ready to redeem");
         assertEq(usdcAmount, 10e6);

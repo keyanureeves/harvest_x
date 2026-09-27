@@ -36,21 +36,13 @@ contract ProcessWasteHarvestX is Script {
 /// (owner only). Use on Sepolia after DeployMocks to enable the
 /// buyCarbonCredits / redeemHxForStablecoin / calculatePriceInUSDC flow.
 contract ConfigureMocksHarvestX is Script {
-    function configure(
-        address _harvestX,
-        address _mockUSDC,
-        address _mockOracle
-    ) public {
+    function configure(address _harvestX, address _mockUSDC, address _mockOracle) public {
         HarvestX(_harvestX).updateOracle(_mockOracle);
         HarvestX(_harvestX).updateUSDC(_mockUSDC);
         console.log("HarvestX pointed at MockUSDC + MockPriceOracle");
     }
 
-    function run(
-        address _harvestX,
-        address _mockUSDC,
-        address _mockOracle
-    ) external {
+    function run(address _harvestX, address _mockUSDC, address _mockOracle) external {
         vm.startBroadcast();
         configure(_harvestX, _mockUSDC, _mockOracle);
         vm.stopBroadcast();
@@ -61,20 +53,12 @@ contract ConfigureMocksHarvestX is Script {
 /// farmer payouts can settle. MockUSDC.mint is owner-only, so this
 /// must be run by the address that deployed MockUSDC.
 contract FundHarvestXUSDC is Script {
-    function fund(
-        address _mockUSDC,
-        address _harvestX,
-        uint256 _amount
-    ) public {
+    function fund(address _mockUSDC, address _harvestX, uint256 _amount) public {
         MockUSDC(_mockUSDC).mint(_harvestX, _amount);
         console.log("Funded HarvestX with mock USDC");
     }
 
-    function run(
-        address _mockUSDC,
-        address _harvestX,
-        uint256 _amount
-    ) external {
+    function run(address _mockUSDC, address _harvestX, uint256 _amount) external {
         vm.startBroadcast();
         fund(_mockUSDC, _harvestX, _amount);
         vm.stopBroadcast();
