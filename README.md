@@ -1,49 +1,121 @@
 # HarvestX
 
-HarvestX is a waste-to-value blockchain application for recording organic-waste processing, rewarding farmers with an ERC-20 token, tracking carbon-credit impact, and settling testnet payments with USDC.
+HarvestX is a blockchain-based incentivization platform that transforms organic waste management into a profitable, transparent, and environmentally sustainable operation. Farmers earn tokenized rewards (HX, symbol `HXT`) and tradable carbon credits for processing organic waste, creating a circular economy that benefits both the environment and local communities.
 
 The repository is an MVP built for **Ethereum Sepolia**. It combines Solidity smart contracts managed with Foundry and a Next.js frontend using wagmi, viem, and RainbowKit. The deployed Sepolia version uses `MockUSDC` and `MockPriceOracle`; it is not a production carbon-credit registry or a real investment product.
 
-## Table of contents
+## Table of Contents
 
-- [What HarvestX does](#what-harvestx-does)
-- [Protocol flow](#protocol-flow)
-  - [Contract rules and economics](#contract-rules-and-economics)
-- [Contract architecture](#contract-architecture)
-- [Repository layout](#repository-layout)
-- [Requirements](#requirements)
-- [Installation](#installation)
-  - [1. Clone the repository](#1-clone-the-repository)
-  - [2. Install contract dependencies and verify the build](#2-install-contract-dependencies-and-verify-the-build)
-  - [3. Install frontend dependencies](#3-install-frontend-dependencies)
-  - [4. Configure the frontend](#4-configure-the-frontend)
-  - [5. Configure deployment variables](#5-configure-deployment-variables)
-- [Run the project locally](#run-the-project-locally)
-  - [Contract development](#contract-development)
-  - [Frontend development](#frontend-development)
-- [Sepolia deployment](#sepolia-deployment)
-  - [Deploy the complete stack](#deploy-the-complete-stack)
-  - [Update an existing deployment](#update-an-existing-deployment)
-  - [Fund redemption reserves](#fund-redemption-reserves)
-  - [Current Sepolia deployment](#current-sepolia-deployment)
-- [Using the application](#using-the-application)
-  - [Farmer workflow](#farmer-workflow)
-  - [Buyer workflow](#buyer-workflow)
-  - [Redemption workflow](#redemption-workflow)
-  - [Administrator workflow](#administrator-workflow)
-- [Frontend routes](#frontend-routes)
-- [Testing and verification](#testing-and-verification)
+- [Overview](#overview)
+- [Problem Statement](#problem-statement)
+  - [Global Challenges](#global-challenges)
+  - [Local Context (Kenya and Africa)](#local-context-kenya-and-africa)
+- [Solution](#solution)
+  - [Real-World Impact](#real-world-impact)
+- [What HarvestX Does](#what-harvestx-does)
+- [Protocol Flow](#protocol-flow)
+- [Technology Stack](#technology-stack)
+  - [Blockchain and Smart Contracts](#blockchain-and-smart-contracts)
+  - [Frontend](#frontend)
+  - [Smart Contracts](#smart-contracts)
+  - [Development Tools](#development-tools)
+- [Repository Layout](#repository-layout)
+- [Smart Contract Architecture](#smart-contract-architecture)
+  - [Core Contracts](#core-contracts)
+  - [Key Functions](#key-functions)
+  - [Token Economics](#token-economics)
+  - [Data Structures](#data-structures)
+  - [Redemption Requirements](#redemption-requirements)
+- [Setup Instructions](#setup-instructions)
+  - [Prerequisites](#prerequisites)
+  - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Install Dependencies](#2-install-dependencies)
+  - [3. Environment Configuration](#3-environment-configuration)
+  - [4. Contract Addresses](#4-contract-addresses)
+  - [5. Deploy Contracts](#5-deploy-contracts)
+  - [6. Run the Development Server](#6-run-the-development-server)
+- [Usage Guide](#usage-guide)
+  - [For Farmers](#for-farmers)
+  - [For Corporations](#for-corporations)
+  - [For Admins](#for-admins)
+- [Token and Redemption System](#token-and-redemption-system)
+  - [Token Details](#token-details)
+  - [Redemption Flow](#redemption-flow)
+  - [Redemption Requirements](#redemption-requirements)
+  - [Debugging Redemption Issues](#debugging-redemption-issues)
+- [Carbon Credits Marketplace](#carbon-credits-marketplace)
+  - [How It Works](#how-it-works)
+  - [Pricing](#pricing)
+- [Economic Model](#economic-model)
+  - [Token Distribution](#token-distribution)
+  - [Example Economics](#example-economics)
+- [Frontend Routes](#frontend-routes)
+- [Deployed Contracts](#deployed-contracts)
+  - [Ethereum Sepolia](#ethereum-sepolia)
+  - [Get Testnet Tokens](#get-testnet-tokens)
+- [Testing and Verification](#testing-and-verification)
+  - [Known Contract Gaps](#known-contract-gaps)
 - [Troubleshooting](#troubleshooting)
   - [`transaction gas limit too high`](#transaction-gas-limit-too-high)
   - [Wrong contract address or failed faucet](#wrong-contract-address-or-failed-faucet)
   - [`Insufficient credits`](#insufficient-credits)
   - [`Insufficient USDC amount`](#insufficient-usdc-amount)
   - [`Insufficient USDC in contract`](#insufficient-usdc-in-contract)
+  - [Redemption reverts for a verified farmer](#redemption-reverts-for-a-verified-farmer)
   - [WalletConnect project missing](#walletconnect-project-missing)
   - [Foundry dependency errors](#foundry-dependency-errors)
+- [Demo](#demo)
 - [Authors](#authors)
 
-## What HarvestX does
+---
+
+## Overview
+
+HarvestX is a decentralised application built on Sepolia that incentivizes organic waste processing through blockchain technology. The platform creates a transparent, verifiable system where farmers earn cryptocurrency tokens and carbon credits for processing organic waste, while corporations can purchase these carbon credits to offset their emissions.
+
+---
+
+## Problem Statement
+
+### Global Challenges
+
+1. **Waste management crisis**: over 2 billion tons of organic waste generated annually, with 33% improperly managed.
+2. **Environmental impact**: organic waste in landfills produces methane, which is 25x more potent than CO2.
+3. **Lack of incentives**: farmers and waste processors have no economic motivation for proper waste management.
+4. **Carbon credit opacity**: existing carbon credit systems are opaque, centralized, and inaccessible to small-scale farmers.
+5. **Verification issues**: no transparent way to verify waste processing and CO2 savings.
+
+### Local Context (Kenya and Africa)
+
+- Limited waste management infrastructure.
+- High agricultural waste (coffee husks, tea waste, crop residues).
+- Need for additional farmer income streams.
+- Growing corporate demand for carbon offsetting.
+
+---
+
+## Solution
+
+HarvestX creates a **blockchain-verified, transparent waste-to-value ecosystem** where:
+
+1. **Farmers register** on the platform and process organic waste.
+2. **Smart contracts automatically mint** HX tokens based on waste processed (1 HX per 10 kg).
+3. **Carbon credits are generated** based on CO2 saved (400 g CO2 per kg of waste).
+4. **Corporations purchase** verified carbon credits directly from farmers.
+5. **Farmers redeem** HX tokens for USDC stablecoin at a 1:1 ratio.
+6. **All transactions** are recorded immutably on-chain for transparency.
+
+### Real-World Impact
+
+- **Environmental**: reduces methane emissions and landfill waste.
+- **Economic**: creates new income streams for farmers with stablecoin payouts.
+- **Social**: generates employment opportunities, with worker tracking included.
+- **Transparency**: blockchain verification ensures authenticity.
+- **Scalability**: can expand across multiple agricultural communities.
+
+---
+
+## What HarvestX Does
 
 HarvestX connects four activities:
 
@@ -54,13 +126,15 @@ HarvestX connects four activities:
 
 The application provides these user flows:
 
-- **Farmers:** register, process waste, claim product tokens, view impact, inspect history, and redeem rewards.
-- **Carbon-credit buyers:** obtain test USDC, look up a farmer, calculate a price, approve USDC, and purchase credits.
-- **Platform administrators:** verify farmers, change pricing and fee settings, update the oracle, and withdraw accumulated platform fees.
+- **Farmers**: register, process waste, claim product tokens, view impact, inspect history, and redeem rewards.
+- **Carbon-credit buyers**: obtain test USDC, look up a farmer, calculate a price, approve USDC, and purchase credits.
+- **Platform administrators**: verify farmers, change pricing and fee settings, update the oracle, and withdraw accumulated platform fees.
 
 The current contract records carbon credits as on-chain accounting data. It does not issue a separate transferable carbon-credit NFT or register credits with an external carbon registry.
 
-## Protocol flow
+---
+
+## Protocol Flow
 
 ```text
 Farmer
@@ -84,40 +158,44 @@ Buyer
        └─ pays the farmer after the platform fee
 ```
 
-### Contract rules and economics
+---
 
-| Value                        | Contract representation                                   |
-| ---------------------------- | --------------------------------------------------------- |
-| Waste and product quantities | Integer kilograms                                         |
-| Worker payment               | Integer Kenyan shillars recorded as KES                   |
-| HX token                     | ERC-20 with 18 decimals and symbol `HXT`                  |
-| Mock USDC                    | ERC-20 with 6 decimals and symbol `mUSDC`                 |
-| Oracle price                 | USD with 8 decimals, for example `100e8` for $100 per ton |
-| Carbon-credit amount         | Hundredths of a metric ton, so `100` means `1.00` ton     |
-| Carbon savings               | `400e18` scaled units per kilogram                        |
-| Default carbon price         | $100 per metric ton                                       |
-| Default platform fee         | 2%                                                        |
-| Maximum platform fee         | 10%                                                       |
-| HX redemption                | Nominal 1 HX to 1 USDC, less network fees                 |
+## Technology Stack
 
-`processWaste` requires at least 10 kg, at least one worker, and a worker payment greater than zero. It mints `floor(kg / 10) * 1e18` HX and accrues `kg * 400e18` scaled CO2 units. A buyer can purchase no more than the farmer's available recorded credits.
+### Blockchain and Smart Contracts
 
-The frontend currently requires registration and owner verification before allowing a farmer to submit a waste record. The contract's `processWaste` registration check is still disabled, so this access rule must be restored or otherwise enforced before production use. Likewise, `buyCarbonCredits` checks that the farmer is registered but does not currently require `verifiedFarmers[farmer]`; review this before relying on verification for credit sales.
+- **Ethereum Sepolia**: Testnet deployment target, chain ID `11155111`
+- **Solidity `^0.8.20`**: Smart contract development
+- **OpenZeppelin Contracts 5.7.0**: `Ownable` access control and ERC-20 implementation
+- **Foundry (Forge, Cast, Anvil)**: Build, test, gas reporting, formatting, and local node
+- **Etherscan**: Source verification for the Sepolia deployment
 
-## Contract architecture
+### Frontend
 
-| Contract          | File                                                               | Responsibility                                                                                              |
-| ----------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `HarvestX`        | [`src/HarvestX.sol`](src/HarvestX.sol)                             | Coordinates farmers, waste records, carbon credits, pricing, purchases, redemption, and owner configuration |
-| `HarvestXToken`   | [`src/HarvestXToken.sol`](src/HarvestXToken.sol)                   | ERC-20 HX token with owner-controlled minting and burning                                                   |
-| `MockUSDC`        | [`test/mocks/MockUSDC.sol`](test/mocks/MockUSDC.sol)               | Six-decimal test stablecoin and development faucet                                                          |
-| `MockPriceOracle` | [`test/mocks/MockPriceOracle.sol`](test/mocks/MockPriceOracle.sol) | Development carbon-price oracle, defaulting to $100 per ton                                                 |
+- **Next.js 16.3.5**: React framework with App Router and Turbopack
+- **React 19.2.8**
+- **TypeScript 5**: Type-safe development
+- **Tailwind CSS 4**: Utility-first styling
+- **RainbowKit 2.2**: Wallet connection interface
+- **Wagmi 2**: React hooks for Ethereum
+- **Viem 2**: TypeScript Ethereum library
 
-The deployment script deploys the four contracts in dependency order, wires their addresses into `HarvestX`, and transfers HX token ownership to `HarvestX` so the main contract can mint farmer rewards.
+### Smart Contracts
 
-The frontend keeps the deployed addresses and ABIs under [`web/lib/contracts`](web/lib/contracts). The main address map is [`web/lib/contracts/HarvestXAbi.ts`](web/lib/contracts/HarvestXAbi.ts).
+- **`src/HarvestX.sol`**: Main contract for farming, carbon credits, and redemption
+- **`src/HarvestXToken.sol`**: ERC-20 HX token, 18 decimals, symbol `HXT`
+- **`test/mocks/MockUSDC.sol`**: Mock USDC stablecoin, 6 decimals, symbol `mUSDC`
+- **`test/mocks/MockPriceOracle.sol`**: Development carbon-price oracle, defaults to $100 per ton
 
-## Repository layout
+### Development Tools
+
+- **Git / GitHub**: Version control
+- **VS Code**: Development environment
+- **ESLint 9**: Code quality
+
+---
+
+## Repository Layout
 
 ```text
 .
@@ -138,26 +216,186 @@ The frontend keeps the deployed addresses and ABIs under [`web/lib/contracts`](w
 └── foundry.toml               Foundry configuration
 ```
 
-## Requirements
+---
 
-Install the following before working on the project:
+## Smart Contract Architecture
 
-- Git
-- Foundry, including Forge and Cast
-- Node.js `20.9.0` or newer
-- npm
-- A browser wallet that can connect to Sepolia
-- Sepolia test ETH for transaction fees
-- A WalletConnect Cloud project ID for the frontend
+### Core Contracts
 
-The contracts use Solidity `0.8.20` and OpenZeppelin. Foundry dependencies are Git submodules under `lib/`.
+#### 1. `HarvestX.sol` - Main Platform Contract
 
-## Installation
+```solidity
+contract HarvestX is Ownable {
+    // Key features:
+    // - Farmer registration and verification
+    // - Waste processing with HX token rewards
+    // - Carbon credit generation and purchase
+    // - MockUSDC redemption system
+    // - Oracle and USDC address management
+}
+```
 
-### 1. Clone the repository
+#### 2. `HarvestXToken.sol` - HX Token (ERC-20)
+
+```solidity
+contract HarvestXToken is ERC20, Ownable {
+    // 18 decimals (standard), name "HxToken", symbol "HXT"
+    // mint(address,uint256)     - onlyOwner
+    // redeem(uint256)           - burns the caller's own balance
+    // burnFrom(address,uint256) - onlyOwner, used by HarvestX redemption
+}
+```
+
+#### 3. `MockUSDC.sol` - Mock USDC Stablecoin
+
+```solidity
+contract MockUSDC is ERC20, Ownable {
+    // 6 decimals (USDC standard), name "Mock USDC", symbol "mUSDC"
+    // quickFaucet()          - transfers 10,000 mUSDC to the caller
+    // refillFaucet(uint256)  - onlyOwner, tops up faucet reserves
+    // mint(address,uint256)  - onlyOwner
+}
+```
+
+#### 4. `MockPriceOracle.sol` - Development Price Oracle
+
+```solidity
+contract MockPriceOracle {
+    // carbonPricePerTon defaults to 100e8 ($100 per metric ton, 8 decimals)
+    // getCarbonCreditPricePerTon() - implements IPriceOracle
+    // setCarbonCreditPricePerTon(uint256)
+}
+```
+
+### Key Functions
+
+#### Farmer Functions
+
+- `register()`: Register as a farmer on the platform.
+- `processWaste(kg, wasteType, workers, payment)`: Submit a waste collection, accrue CO2 savings, and mint HX.
+- `claimProductTokens(productKg)`: Claim HX for produced compost, fertilizer, or biochar.
+
+#### Redemption Functions
+
+- `redeemHxForStablecoin(hxAmount)`: Burn HX and receive MockUSDC at a 1:1 ratio. Restricted to verified farmers.
+- `checkRedemptionStatus(hxAmount)`: Check redemption eligibility. View function.
+
+#### View Functions
+
+- `getImpact(address)`: Get a farmer's complete statistics.
+- `getGlobalStats()`: Platform-wide metrics.
+- `getAvailableCarbonCredits(address)`: Check the credits a farmer can still sell.
+- `getWastehistory(address)`: Retrieve all waste collections. The contract spells this one `getWastehistory`, with a lowercase `h`.
+- `getWorkerPayments(address)`: Retrieve recorded worker payments.
+- `getCorporatePurchases(buyer)`: Total credits purchased by a buyer.
+
+#### Carbon Credit Functions
+
+- `buyCarbonCredits(farmer, tons, maxUSDC)`: Purchase a farmer's carbon credits.
+- `calculatePriceInUSDC(tons)`: Quote the purchase price. View function.
+- `getAvailableCarbonCredits(farmer)`: Check available credits.
+
+#### Admin Functions
+
+- `verifyFarmer(address)`: Verify a farmer for carbon-credit sales.
+- `revokeVerification(address)`: Revoke farmer verification.
+- `setPlatformFee(feePercentage)`: Set the platform fee, up to 10%.
+- `setMinPricePerTon(price)`: Set the minimum carbon-credit price.
+- `updateOracle(address)`: Replace the price oracle.
+- `updateUSDC(address)`: Replace the MockUSDC address.
+- `withdrawPlatformFees(amount)`: Withdraw accumulated platform fees.
+
+All admin functions are `onlyOwner`.
+
+### Token Economics
+
+```text
+HX token:      18 decimals, symbol HXT
+MockUSDC:       6 decimals, symbol mUSDC
+Waste reward:  1 HX per 10 kg of waste (TOKENS_PER_10KG = 1e18)
+CO2_PER_KG:    400 g CO2e per kg, scaled as 400e18
+Carbon credit: hundredths of a metric ton, so 100 means 1.00 ton
+Default price: $100 per metric ton (100e8, 8 decimals)
+Platform fee:  2% by default, 10% maximum
+Redemption:    1 HX (1e18) redeems for 1 USDC (1e6); HX is burned
+```
+
+| Value | Contract representation |
+| --- | --- |
+| Waste and product quantities | Integer kilograms |
+| Worker payment | Integer Kenyan shillars recorded as KES |
+| Oracle price | USD with 8 decimals, e.g. `100e8` for $100 per ton |
+| Carbon-credit amount | Hundredths of a metric ton, so `100` means `1.00` ton |
+
+### Data Structures
+
+```solidity
+struct FarmerData {
+    bool isRegistered;
+    uint256 totalWasteKg;
+    uint256 totalCO2Saved;
+    uint256 totalProductKg;
+    uint256 totalWorkersPaid;
+    uint256 totalPayoutKES;
+}
+
+struct WasteCollection {
+    uint256 kgCollected;
+    uint256 timestamp;
+    uint256 workersInvolved;
+    uint256 workersPaymentKES;
+    string wasteType;
+}
+
+struct WorkerPayment {
+    address worker;      // may be zero when paid in cash
+    uint256 amountKES;
+    uint256 timestamp;
+}
+```
+
+### Redemption Requirements
+
+To redeem HX for MockUSDC, farmers must:
+
+1. Be registered on the platform.
+2. Be verified by the contract owner. `redeemHxForStablecoin` is `onlyVerifiedFarmer`.
+3. Request an amount greater than zero.
+4. Hold at least the equivalent HX balance.
+5. Ensure the `HarvestX` contract holds sufficient MockUSDC reserves.
+
+---
+
+## Setup Instructions
+
+### Prerequisites
 
 ```bash
-git clone <repository-url>
+# Node.js (v20.9.0 or higher)
+node --version
+
+# npm
+npm --version
+
+# Git
+git --version
+
+# Foundry (forge, cast, anvil)
+forge --version
+```
+
+You also need:
+
+- A browser wallet that can connect to Sepolia, such as MetaMask.
+- Sepolia test ETH for transaction fees.
+- A WalletConnect Cloud project ID for the frontend.
+
+The contracts use Solidity `0.8.20` and OpenZeppelin Contracts 5.7.0. Foundry dependencies are Git submodules under `lib/`.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/keyanureeves/harvest_x.git
 cd harvest_x
 ```
 
@@ -167,22 +405,20 @@ If the repository is already checked out, initialize its submodules:
 git submodule update --init --recursive
 ```
 
-### 2. Install contract dependencies and verify the build
+### 2. Install Dependencies
 
-The repository already contains the Solidity sources and Foundry configuration. From the repository root, run:
+Contract dependencies and build verification, from the repository root:
 
 ```bash
 forge build
 forge test
 ```
 
-If dependencies need to be refreshed, the repository also provides:
+If dependencies need to be refreshed:
 
 ```bash
 forge update
 ```
-
-### 3. Install frontend dependencies
 
 The frontend is a separate npm application:
 
@@ -192,55 +428,88 @@ npm ci
 cd ..
 ```
 
-### 4. Configure the frontend
+### 3. Environment Configuration
 
-Create [`web/.env.local`](web/.env.local) with the WalletConnect project ID used by RainbowKit:
+For frontend development, create `web/.env.local` with the WalletConnect project ID used by RainbowKit:
 
 ```dotenv
 NEXT_PUBLIC_WC_PROJECT_ID=<walletconnect-project-id>
 ```
 
-The current frontend is configured for Sepolia in [`web/lib/config.ts`](web/lib/config.ts) and uses the Tenderly Sepolia gateway. The RPC URL is currently defined in that file rather than read from an environment variable. If you use another Sepolia provider, update the transport there.
-
-### 5. Configure deployment variables
-
-Create [`.env`](.env) in the repository root when deploying to Sepolia. The root `.env` file is ignored by Git and must never be committed.
+For contract deployment, create `.env` in the repository root:
 
 ```dotenv
+# Deployment
 SEPOLIA_RPC_URL=<your-sepolia-rpc-url>
 PRIVATE_KEY=<test-wallet-private-key>
 ETHERSCAN_API_KEY=<etherscan-api-key>
+
+# Post-deployment configuration and funding targets
 HARVESTX_SEPOLIA=<deployed-harvestx-address>
 SEPOLIA_MOCK_USDC=<deployed-mock-usdc-address>
 SEPOLIA_MOCK_ORACLE=<deployed-mock-oracle-address>
 FUND_AMOUNT_USDC=<amount-in-six-decimal-units>
 ```
 
-`SEPOLIA_RPC_URL`, `PRIVATE_KEY`, and `ETHERSCAN_API_KEY` are used by the deployment target. The address variables are used by the post-deployment configuration and funding targets. `FUND_AMOUNT_USDC` must be a raw MockUSDC amount with six decimals; for example, `1000000` represents one USDC.
+`FUND_AMOUNT_USDC` must be a raw MockUSDC amount with six decimals; for example, `1000000` represents one USDC. The root `.env` file is ignored by Git and must never be committed.
 
 Use a dedicated testnet wallet. Never put a private key, RPC credential, or API secret in source code, frontend environment variables, or documentation.
 
-## Run the project locally
+### 4. Contract Addresses
 
-### Contract development
+Contract addresses are configured in [`web/lib/contracts/HarvestXAbi.ts`](web/lib/contracts/HarvestXAbi.ts). Update these after deployment:
 
-Run the deterministic Foundry test suite:
+```typescript
+export const contractAddresses = {
+  sepolia: {
+    main: "0x0bb5B927aED4FE97483b0bF72AD9999Fd9BB3195",
+    mockUSDC: "0x59Ca3C55C723674cD7Be54cEE7CcD735168bafd1",
+    mockOracle: "0x6257Fcf9BBD032168E39aF1349f1EE3598229EB7",
+    harvestXToken: "0x377175AFb7E98c3302E4d47D570AfED6374AD658",
+  },
+} as const;
 
-```bash
-forge test
+export type ContractType = keyof typeof contractAddresses.sepolia;
+
+export const getContractAddress = (
+  chainId?: number,
+  contractType: ContractType = "main",
+): `0x${string}` => {
+  // Default to Sepolia (11155111); falls back to Sepolia for any other chain.
+  return contractAddresses.sepolia[contractType];
+};
 ```
 
-Generate a gas report for the full suite:
+The matching ABIs live alongside it in `MockUsdcAbi.ts`, `MockPriceOracleAbi.ts`, and `HarvestXTokenAbi.ts`. The frontend is configured for Sepolia in [`web/lib/config.ts`](web/lib/config.ts) and currently uses the Tenderly Sepolia gateway; the RPC URL is defined in that file rather than read from an environment variable.
+
+### 5. Deploy Contracts
+
+The deployment script deploys `MockUSDC`, `MockPriceOracle`, `HarvestXToken`, and `HarvestX` in dependency order, wires their addresses into `HarvestX`, and transfers HX token ownership to `HarvestX` so the main contract can mint farmer rewards.
 
 ```bash
-forge test --gas-report
+make deploy-sepolia
 ```
 
-Format Solidity code when needed:
+The command uses the private key to broadcast transactions and the Etherscan API key to verify the contracts. Record the addresses emitted by the script and the latest file under `broadcast/DeployHarvestX.s.sol/11155111/`.
+
+To replace only the mock dependencies of an existing `HarvestX` deployment:
 
 ```bash
-forge fmt
+make deploy-mocks-sepolia
+make configure-mocks-sepolia
 ```
+
+Set `HARVESTX_SEPOLIA`, `SEPOLIA_MOCK_USDC`, and `SEPOLIA_MOCK_ORACLE` to the relevant addresses first. The wallet used by `configure-mocks-sepolia` must be the `HarvestX` owner, because the configuration functions are owner-only. The wallet used by `deploy-mocks-sepolia` becomes the owner of the newly deployed `MockUSDC`.
+
+Redemption requires MockUSDC to be held by the `HarvestX` contract, so fund the reserves before testing:
+
+```bash
+make fund-harvestx-usdc-sepolia
+```
+
+The wallet used by this command must be the `MockUSDC` owner because the script calls `MockUSDC.mint`.
+
+### 6. Run the Development Server
 
 To start the local Anvil node defined by the Makefile:
 
@@ -248,18 +517,14 @@ To start the local Anvil node defined by the Makefile:
 make anvil
 ```
 
-The tests are the recommended local workflow because they deploy and exercise the complete contract stack without requiring a wallet.
-
-### Frontend development
-
-From the repository root:
+Then, from the repository root:
 
 ```bash
 cd web
 npm run dev
 ```
 
-Open `http://localhost:3000` in a browser. Connect a wallet and switch it to Sepolia when prompted.
+Open [http://localhost:3000](http://localhost:3000) in a browser. Connect a wallet and switch it to Sepolia when prompted.
 
 The available frontend checks are:
 
@@ -272,120 +537,254 @@ npm start
 
 `npm start` serves an existing production build. Run `npm run build` first.
 
-## Sepolia deployment
+---
 
-### Deploy the complete stack
+## Usage Guide
 
-The full deployment script deploys `MockUSDC`, `MockPriceOracle`, `HarvestXToken`, and `HarvestX`, then transfers HX token ownership to the main contract.
+### For Farmers
 
-With the root `.env` configured, run:
+#### 1. Connect Wallet
 
-```bash
-make deploy-sepolia
+- Click **Connect Wallet** in the sidebar.
+- Select a browser wallet or WalletConnect.
+- Ensure you are on Ethereum Sepolia.
+
+#### 2. Register
+
+- Navigate to **Dashboard**.
+- Click **Register as Farmer**.
+- Confirm the transaction in your wallet.
+- Wait for confirmation.
+
+#### 3. Process Waste
+
+- Go to the **Process Waste** page.
+- Fill in the details:
+  - Amount of waste, minimum 10 kg.
+  - Waste type.
+  - Number of workers involved, at least 1.
+  - Total payment to workers in KES, greater than zero.
+- Submit and confirm the transaction.
+- Receive HX tokens automatically, plus accruing CO2 savings.
+
+#### 4. Claim Product Tokens
+
+- After composting, go to **Mint Tokens**.
+- Enter the kg of compost, fertilizer, or biochar produced.
+- Submit the transaction.
+- Receive additional HX tokens.
+
+#### 5. Redeem HX for USDC
+
+- Navigate to the **Balance** page.
+- Ensure you have been verified by the owner from the **Admin** page.
+- Enter the HX amount to redeem, for example 100 HX.
+- Click **Redeem for USDC** and confirm the transaction.
+- Receive MockUSDC at a 1:1 ratio, less network fees.
+
+#### 6. View Carbon Credits
+
+- Navigate to the **Carbon Credits** page.
+- View the credits available for sale.
+- Share your wallet address with corporations.
+
+### For Corporations
+
+#### 1. Get Test USDC
+
+- Navigate to the **Balance** page.
+- Use the MockUSDC faucet to get test tokens. `quickFaucet` sends 10,000 mUSDC per call. Although the mock declares `hasUsedFaucet`, it never records a claim, so the faucet can be called repeatedly while the mock has funds.
+
+#### 2. Purchase Carbon Credits
+
+- Navigate to the **Carbon Credits** page.
+- Switch to the **Corporate Buyer** view.
+- Enter the farmer's wallet address and the tons of CO2 to purchase.
+- The UI sends tons as hundredths of a ton, so `1.5` becomes `150` on-chain.
+- Approve MockUSDC when prompted; the purchase hook waits for approval to confirm before submitting.
+- Submit and confirm the transaction. MockUSDC is transferred to `HarvestX`, the platform fee remains in the contract, and the farmer receives the remainder.
+
+### For Admins
+
+#### 1. Verify Farmers
+
+- Navigate to the **Admin** page, which is owner-only.
+- Check the farmer registration status.
+- Enter the farmer address to verify. The farmer can then redeem HX and, once enforcement is restored, sell carbon credits.
+- Use **revoke verification** to remove verification.
+
+#### 2. Configure Pricing and Fees
+
+- Set the minimum carbon-credit price per ton.
+- Set the platform fee, up to 10%.
+- Replace the price oracle or the MockUSDC address.
+
+#### 3. Fund the Contract for Redemptions
+
+- Ensure the contract holds sufficient MockUSDC for redemptions.
+- Transfer MockUSDC to the contract address, or use `make fund-harvestx-usdc-sepolia`.
+
+#### 4. Withdraw Platform Fees
+
+- Withdraw the accumulated platform USDC from the contract.
+
+---
+
+## Token and Redemption System
+
+### Token Details
+
+| Token | Symbol | Decimals | Purpose |
+| --- | --- | --- | --- |
+| HxToken | `HXT` | 18 | Utility token earned from waste processing and product claims |
+| Mock USDC | `mUSDC` | 6 | Stablecoin for redemptions and carbon-credit purchases |
+
+### Redemption Flow
+
+```text
+┌────────────────────────────────────────────────────────────────┐
+│                       REDEMPTION PROCESS                       │
+├────────────────────────────────────────────────────────────────┤
+│         1. Farmer calls redeemHxForStablecoin(100 HX)          │
+│                     2. Contract verifies:                      │
+│                      - farmer is registered                    │
+│             - farmer is verified (onlyVerifiedFarmer)          │
+│                   - amount is greater than zero                │
+│                   - farmer holds 100 HX (1e18)                 │
+│                 - contract holds 100 mUSDC (1e6)               │
+│             3. Contract burns 100 HX via burnFrom              │
+│         4. Contract transfers 100 mUSDC to the farmer          │
+│                   5. Redeemed event emitted                    │
+└────────────────────────────────────────────────────────────────┘
 ```
 
-The command uses the private key to broadcast transactions and the Etherscan API key to verify the contracts. Record the addresses emitted by the script and the latest file under `broadcast/DeployHarvestX.s.sol/11155111/`.
+### Redemption Requirements
 
-### Update an existing deployment
+| Requirement | Description |
+| --- | --- |
+| Registration | Farmer must be registered via `register()` |
+| Verification | Farmer must be verified by the owner; the function is `onlyVerifiedFarmer` |
+| Amount | Redemption amount must be greater than zero |
+| HX balance | Farmer must hold at least the requested HX |
+| USDC reserve | The `HarvestX` contract must hold sufficient MockUSDC |
 
-If you only need to replace the mock dependencies for an existing `HarvestX` deployment, deploy the mocks first:
+### Debugging Redemption Issues
 
-```bash
-make deploy-mocks-sepolia
+Use the `checkRedemptionStatus(amount)` view function to diagnose issues. It returns:
+
+- `canRedeem`: whether the redemption would succeed.
+- `reason`: the failure reason when it would not.
+- `usdcAmount`: the MockUSDC that would be sent.
+- `contractUSDCBalance`: the contract's current reserves.
+- `userHXBalance`: the caller's HX balance.
+- `isRegistered`: whether the caller is registered.
+- `isVerified`: whether the caller is verified.
+
+---
+
+## Carbon Credits Marketplace
+
+### How It Works
+
+1. **Generation**: Farmers earn carbon credits by processing waste.
+   - 1 kg of waste equals 400 g of CO2 saved, scaled as `400e18`.
+   - Credits accumulate in the farmer's account as `carbonCreditsEarned`.
+2. **Verification**: The owner verifies legitimate farmers.
+   - Only registered farmers can currently sell credits. `buyCarbonCredits` checks `farmers[farmer].isRegistered` but does not yet require `verifiedFarmers[farmer]`; review this before relying on verification for credit sales.
+3. **Trading**: Corporations purchase credits directly.
+   - The price is read from `MockPriceOracle`.
+   - Settlement is instant and on-chain.
+   - Payment goes directly to the farmer, less the platform fee.
+4. **Transparency**: All transactions are on-chain.
+   - Immutable record.
+   - Easy auditing.
+   - Real impact verification.
+
+### Pricing
+
+- **Oracle rate**: $100 per metric ton by default, in 8 decimals (`100e8`).
+- **Minimum price**: configurable by the owner through `setMinPricePerTon`, and enforced against the oracle price.
+- **Platform fee**: 2% by default, 10% maximum.
+- **Payment**: MockUSDC stablecoin.
+- **Precision**: carbon-credit amounts are stored in hundredths of a metric ton, so `100` means `1.00` ton.
+
+---
+
+## Economic Model
+
+### Token Distribution
+
+```text
+Waste processing: 1 HX per 10 kg
+Product creation: 1 HX per 10 kg compost/fertilizer/biochar
+Total supply:     Unlimited (minted as rewards)
+Redemption:       1 HX (1e18) = 1 USDC (1e6), after decimal adjustment
 ```
 
-Set `HARVESTX_SEPOLIA`, `SEPOLIA_MOCK_USDC`, and `SEPOLIA_MOCK_ORACLE` to the relevant addresses, then point the existing contract at the new mocks:
+### Example Economics
 
-```bash
-make configure-mocks-sepolia
+**Small Farmer (Monthly)**
+
+```text
+Waste processed:   200 kg
+Tokens earned:     20 HX
+Redemption value:  20 USDC
+CO2 credits:       0.08 tons (8 USDC at the default oracle price)
 ```
 
-The wallet used by `configure-mocks-sepolia` must be the `HarvestX` owner because the configuration functions are owner-only. The wallet used by `deploy-mocks-sepolia` becomes the owner of the newly deployed `MockUSDC`.
+**Medium Cooperative (Monthly)**
 
-### Fund redemption reserves
-
-Redemption requires MockUSDC to be held by the `HarvestX` contract. Set `FUND_AMOUNT_USDC` to the raw six-decimal amount and run:
-
-```bash
-make fund-harvestx-usdc-sepolia
+```text
+Waste processed:   2,000 kg (10 farmers)
+Tokens earned:     200 HX
+Redemption value:  200 USDC
+CO2 credits:       0.8 tons (80 USDC at the default oracle price)
 ```
 
-The wallet used by this command must be the `MockUSDC` owner because the script calls `MockUSDC.mint`.
+---
 
-### Current Sepolia deployment
+## Frontend Routes
 
-The addresses currently used by the frontend are:
+| Route | Purpose |
+| --- | --- |
+| `/` | HarvestX landing page and product overview |
+| `/dashboard` | Farmer registration and impact summary |
+| `/process` | Waste processing form and carbon/reward preview |
+| `/mint` | Product-token claims |
+| `/carbon-credits` | Farmer credit view and corporate buyer flow |
+| `/balance` | HX and MockUSDC balances, faucet, redemption, and activity |
+| `/history` | Waste, product, and redemption event history |
+| `/profile` | Connected-wallet profile information |
+| `/admin` | Owner-only verification and configuration controls |
 
-| Contract          | Address                                      |
-| ----------------- | -------------------------------------------- |
-| `HarvestX`        | `0x0bb5B927aED4FE97483b0bF72AD9999Fd9BB3195` |
-| `HarvestXToken`   | `0x377175AFb7E98c3302E4d47D570AfED6374AD658` |
-| `MockUSDC`        | `0x59Ca3C55C723674cD7Be54cEE7CcD735168bafd1` |
+These routes are defined in the `web/app/(dashboard)` route group, so the group name does not appear in the URL.
+
+---
+
+## Deployed Contracts
+
+### Ethereum Sepolia
+
+| Contract | Address |
+| --- | --- |
+| `HarvestX` | `0x0bb5B927aED4FE97483b0bF72AD9999Fd9BB3195` |
+| `HarvestXToken` | `0x377175AFb7E98c3302E4d47D570AfED6374AD658` |
+| `MockUSDC` | `0x59Ca3C55C723674cD7Be54cEE7CcD735168bafd1` |
 | `MockPriceOracle` | `0x6257Fcf9BBD032168E39aF1349f1EE3598229EB7` |
-| Network           | Ethereum Sepolia                             |
-| Chain ID          | `11155111`                                   |
+| Network | Ethereum Sepolia |
+| Chain ID | `11155111` |
+| Explorer | https://sepolia.etherscan.io/ |
 
 The authoritative deployment record is [`broadcast/DeployHarvestX.s.sol/11155111/run-latest.json`](broadcast/DeployHarvestX.s.sol/11155111/run-latest.json). When deploying a new stack, update the address constants in `HarvestXAbi.ts`, `MockUsdcAbi.ts`, `MockPriceOracleAbi.ts`, and `HarvestXTokenAbi.ts` so all frontend calls target the same deployment.
 
-## Using the application
+### Get Testnet Tokens
 
-### Farmer workflow
+- **Sepolia ETH**: required for gas. Use a public Sepolia faucet.
+- **Mock USDC**: use the in-app faucet on the **Balance** page, or fund the contract with `make fund-harvestx-usdc-sepolia`.
 
-1. Connect a Sepolia wallet.
-2. Open **Dashboard** and select **Register as Farmer**.
-3. Ask the contract owner to verify the address from the **Admin** page.
-4. Open **Process Waste** and enter:
-   - collected kilograms, at least 10;
-   - waste type;
-   - number of workers;
-   - total worker payment in KES.
-5. Confirm the transaction. The contract updates impact metrics, accrues carbon savings, and mints HX.
-6. Use **Mint Tokens** to claim additional HX for compost, fertilizer, or biochar output.
-7. Review balances, impact, and transaction history in **Balance** and **History**.
+---
 
-### Buyer workflow
-
-1. Connect a Sepolia wallet.
-2. Open **Balance** and use the MockUSDC faucet. `quickFaucet` sends 10,000 test USDC per call. Although the contract exposes `hasUsedFaucet`, the current mock does not mark claims as used, so the faucet can be called repeatedly while the mock has funds.
-3. Open **Carbon Credits** and switch to **Corporate Buyer**.
-4. Enter the farmer address and the desired tons of CO2.
-5. Review the on-chain price calculation. The UI sends tons as hundredths of a ton; `1.5` becomes `150` on-chain.
-6. Approve MockUSDC when prompted. The purchase hook waits for approval to confirm before submitting the purchase.
-7. Confirm the purchase. MockUSDC is transferred to `HarvestX`, the platform fee remains in the contract, and the farmer receives the remainder.
-
-### Redemption workflow
-
-1. Accumulate HX through waste processing or product claims.
-2. Have the farmer verified by the contract owner.
-3. Ensure the `HarvestX` contract has enough MockUSDC for the redemption amount.
-4. Open **Balance**, enter an HX amount, and submit the redemption.
-5. The contract burns the farmer's HX and transfers the equivalent MockUSDC to the farmer.
-
-### Administrator workflow
-
-The **Admin** page is available only to the `HarvestX` owner. It can:
-
-- verify or revoke a registered farmer;
-- set the minimum carbon-credit price;
-- set the platform fee up to 10%;
-- replace the price oracle;
-- withdraw accumulated platform USDC.
-
-## Frontend routes
-
-| Route             | Purpose                                                    |
-| ----------------- | ---------------------------------------------------------- |
-| `/`               | HarvestX landing page and product overview                 |
-| `/dashboard`      | Farmer registration and impact summary                     |
-| `/process`        | Waste processing form and carbon/reward preview            |
-| `/mint`           | Product-token claims                                       |
-| `/carbon-credits` | Farmer credit view and corporate buyer flow                |
-| `/balance`        | HX and MockUSDC balances, faucet, redemption, and activity |
-| `/history`        | Waste, product, and redemption event history               |
-| `/profile`        | Connected-wallet profile information                       |
-| `/admin`          | Owner-only verification and configuration controls         |
-
-## Testing and verification
+## Testing and Verification
 
 The contract suite covers registration, validation, reward minting, carbon-credit accounting, buying, redemption, owner controls, and cross-contract deployment flows.
 
@@ -409,6 +808,15 @@ The local verification used for this project passed:
 
 The focused `buyCarbonCredits` report measured approximately 180,338 gas. A frontend gas estimate should be used instead of sending a fixed 21,000,000 gas limit; the current purchase hook adds a buffer and rejects limits above the Sepolia RPC cap of 16,777,216.
 
+### Known Contract Gaps
+
+Two access rules are not enforced on-chain and must be restored before production use:
+
+1. `processWaste` has its registration check commented out, so any address can submit a waste record. The frontend enforces registration and verification, but the contract does not.
+2. `buyCarbonCredits` requires that the farmer is registered, but not that the farmer is verified.
+
+---
+
 ## Troubleshooting
 
 ### `transaction gas limit too high`
@@ -431,6 +839,10 @@ The buyer must provide at least the price returned by `calculatePriceInUSDC`. Th
 
 Fund the `HarvestX` contract with MockUSDC before testing redemption. Use `make fund-harvestx-usdc-sepolia` or transfer test USDC from the MockUSDC owner.
 
+### Redemption reverts for a verified farmer
+
+Call `checkRedemptionStatus(amount)` and read the `reason` field. Note that the insufficient-balance branch in `checkRedemptionStatus` currently returns the message `Insufficient USDC in contract` even when the real problem is an insufficient HX balance, so the reason string is not always reliable.
+
 ### WalletConnect project missing
 
 Set `NEXT_PUBLIC_WC_PROJECT_ID` in `web/.env.local`, restart the Next.js server, and reload the browser.
@@ -443,6 +855,14 @@ Initialize the Git submodules again:
 git submodule update --init --recursive
 forge build
 ```
+
+---
+
+## Demo
+
+There is no public demo deployment yet. Run the project locally and open [http://localhost:3000](http://localhost:3000) against the Sepolia deployment listed above.
+
+---
 
 ## Authors
 

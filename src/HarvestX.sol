@@ -38,7 +38,7 @@ contract HarvestX is Ownable {
     //state variables
 
     //constants
-    uint256 public constant TOKENS_PER_10KG = 1e18; // 1 OWG per 10kg
+    uint256 public constant TOKENS_PER_10KG = 1e18; // 1 HX per 10 kg
     uint256 public constant CO2_PER_KG = 400e18; //grams of CO2e per kg (with 18 decimals)
     uint256 public constant GRAMS_PER_TON = 1e6; // 1 ton = 1,000,000 grams
     uint256 public constant CO2_GRAMS_PER_TON = GRAMS_PER_TON * 1e18; // 1,000,000e18 = grams CO2e in 1 metric ton (1 ton = 1,000,000 g)
@@ -54,7 +54,7 @@ contract HarvestX is Ownable {
     uint256 platformFeePercentage = 2;
 
     // uint256 public minPricePerTon = 1000; // Minimum USD per ton//??price from mock oracle thcen
-    // uint256 public minPaymentPerTon = 0.0001 ether; //??//Native coin polkadot
+    // uint256 public minPaymentPerTon = 0.0001 ether;
 
     //farmer tracking
     mapping(address => FarmerData) public farmers;
@@ -97,7 +97,11 @@ contract HarvestX is Ownable {
         uint256 timestamp // FIXED - "timestamo" -> "timestamp"
     );
 
-    event CarbonCreditIssued(address indexed farmer, uint256 co2Grams, uint256 timestamp);
+    event CarbonCreditIssued(
+        address indexed farmer,
+        uint256 co2Grams,
+        uint256 timestamp
+    );
 
     event CarbonCreditSold(
         address indexed farmer,
@@ -115,12 +119,24 @@ contract HarvestX is Ownable {
     event MinPriceUpdated(uint256 newPrice, uint256 timestamp);
     event PlatformFeesWithdrawn(uint256 amount, uint256 timestamp);
 
-    event InsufficientReserves(address indexed farmer, uint256 requestedTokens, uint256 mintableSupply);
+    event InsufficientReserves(
+        address indexed farmer,
+        uint256 requestedTokens,
+        uint256 mintableSupply
+    );
 
-    event Redeemed(address indexed farmer, uint256 owgAmount, uint256 usdcAmount);
+    event Redeemed(
+        address indexed farmer,
+        uint256 owgAmount,
+        uint256 usdcAmount
+    );
 
     //constructor
-    constructor(address _hxTokenAddress, address _priceOracleAddress, address _usdc) Ownable(msg.sender) {
+    constructor(
+        address _hxTokenAddress,
+        address _priceOracleAddress,
+        address _usdc
+    ) Ownable(msg.sender) {
         hxToken = HarvestXToken(_hxTokenAddress);
         priceOracle = IPriceOracle(_priceOracleAddress);
         USDC = IERC20(_usdc);
@@ -245,7 +261,13 @@ contract HarvestX is Ownable {
         hxToken.mint(msg.sender, tokens);
 
         emit WasteProcessed(
-            msg.sender, collectedWasteKg, tokens, co2, _workersInvolved, _workersPaymentKES, block.timestamp
+            msg.sender,
+            collectedWasteKg,
+            tokens,
+            co2,
+            _workersInvolved,
+            _workersPaymentKES,
+            block.timestamp
         );
 
         emit CarbonCreditIssued(msg.sender, co2, block.timestamp);
@@ -270,14 +292,19 @@ contract HarvestX is Ownable {
     }
 
     //_tonsCO2 is in hundredths of a metric ton (e.g 1.5 tons = 150)
-    function buyCarbonCredits(address _farmer, uint256 _tonsCO2, uint256 _amountUSDC) external {
+    function buyCarbonCredits(
+        address _farmer,
+        uint256 _tonsCO2,
+        uint256 _amountUSDC
+    ) external {
         require(_tonsCO2 > 0, "Must purchase at 0.01 ton of CO2"); //this is a problem
         require(_amountUSDC > 0, "USDC must be greater than zero ");
         require(farmers[_farmer].isRegistered, "Farmer is not registered");
 
         //convert form hundreths to grams: _tonsCO2  * CO2_GRAMS_PER_TON/100
         uint256 _creditsToBuy = (_tonsCO2 * CO2_GRAMS_PER_TON) / 100;
-        uint256 availableCredits = carbonCreditsEarned[_farmer] - carbonCreditsClaimed[_farmer];
+        uint256 availableCredits = carbonCreditsEarned[_farmer] -
+            carbonCreditsClaimed[_farmer];
 
         require(availableCredits >= _creditsToBuy, "Insufficient credits");
 
@@ -294,11 +321,15 @@ contract HarvestX is Ownable {
         require(_amountUSDC >= totalPriceUSDC, "Insufficient USDC amount");
 
         //Calculate platform fee in USDC
-        uint256 platformFeeUSDC = (totalPriceUSDC * platformFeePercentage) / 100;
+        uint256 platformFeeUSDC = (totalPriceUSDC * platformFeePercentage) /
+            100;
         uint256 farmerPayoutUSDC = totalPriceUSDC - platformFeeUSDC;
 
         //transfer USDC from buyer to contract
-        require(USDC.transferFrom(msg.sender, address(this), totalPriceUSDC), "USDC transfer failed");
+        require(
+            USDC.transferFrom(msg.sender, address(this), totalPriceUSDC),
+            "USDC transfer failed"
+        );
 
         //mark credits as sold
         carbonCreditsClaimed[_farmer] += _creditsToBuy;
@@ -306,12 +337,24 @@ contract HarvestX is Ownable {
         totalCarbonCreditsSold += _tonsCO2; // hundredths of a metric ton
 
         //transfer USDC payment to farmer
-        require(USDC.transfer(_farmer, farmerPayoutUSDC), "Farmer USDC payment failed");
+        require(
+            USDC.transfer(_farmer, farmerPayoutUSDC),
+            "Farmer USDC payment failed"
+        );
 
-        emit CarbonCreditSold(_farmer, msg.sender, _tonsCO2, totalPriceUSD, totalPriceUSDC, block.timestamp);
+        emit CarbonCreditSold(
+            _farmer,
+            msg.sender,
+            _tonsCO2,
+            totalPriceUSD,
+            totalPriceUSDC,
+            block.timestamp
+        );
     }
 
-    function redeemHxForStablecoin(uint256 _hxAmount) external onlyVerifiedFarmer {
+    function redeemHxForStablecoin(
+        uint256 _hxAmount
+    ) external onlyVerifiedFarmer {
         //verify and update farmer data
         //check
         require(_hxAmount > 0, "Insufficient amount");
@@ -320,8 +363,14 @@ contract HarvestX is Ownable {
         uint256 usdcAmount = (_hxAmount * 1e6) / 1e18;
 
         // require(_hxToken.balanceOf(msg.sender) >= usdcAmount, "Insufficient amount of Hx token"); // OLD - no such var, contract var is "hxToken"
-        require(hxToken.balanceOf(msg.sender) >= usdcAmount, "Insufficient amount of Hx token");
-        require(USDC.balanceOf(address(this)) >= usdcAmount, "Insufficient USDC in contract");
+        require(
+            hxToken.balanceOf(msg.sender) >= usdcAmount,
+            "Insufficient amount of Hx token"
+        );
+        require(
+            USDC.balanceOf(address(this)) >= usdcAmount,
+            "Insufficient USDC in contract"
+        );
 
         //burn tokens
         //hxToken.redeem (_hxAmount);
@@ -336,7 +385,9 @@ contract HarvestX is Ownable {
 
     //view functions
     //check if redemption is possible
-    function checkRedemptionStatus(uint256 hxAmount)
+    function checkRedemptionStatus(
+        uint256 hxAmount
+    )
         external
         view
         returns (
@@ -355,14 +406,37 @@ contract HarvestX is Ownable {
         contractUSDCBalance = USDC.balanceOf(address(this));
 
         if (!isRegistered) {
-            return
-                (false, "Not registered as a farmer", 0, contractUSDCBalance, userHXBalance, isRegistered, isVerified);
+            return (
+                false,
+                "Not registered as a farmer",
+                0,
+                contractUSDCBalance,
+                userHXBalance,
+                isRegistered,
+                isVerified
+            );
         }
         if (!isVerified) {
-            return (false, "Farmer not verified", 0, contractUSDCBalance, userHXBalance, isRegistered, isVerified);
+            return (
+                false,
+                "Farmer not verified",
+                0,
+                contractUSDCBalance,
+                userHXBalance,
+                isRegistered,
+                isVerified
+            );
         }
         if (hxAmount == 0) {
-            return (false, "Amount must be > 0", 0, contractUSDCBalance, userHXBalance, isRegistered, isVerified);
+            return (
+                false,
+                "Amount must be > 0",
+                0,
+                contractUSDCBalance,
+                userHXBalance,
+                isRegistered,
+                isVerified
+            );
         }
         if (userHXBalance < hxAmount) {
             return (
@@ -390,13 +464,28 @@ contract HarvestX is Ownable {
             );
         }
 
-        return (true, "Ready to redeem", usdcAmount, contractUSDCBalance, userHXBalance, isRegistered, isVerified);
+        return (
+            true,
+            "Ready to redeem",
+            usdcAmount,
+            contractUSDCBalance,
+            userHXBalance,
+            isRegistered,
+            isVerified
+        );
     }
 
-    function getAvailableCarbonCredits(address _farmer)
+    function getAvailableCarbonCredits(
+        address _farmer
+    )
         external
         view
-        returns (uint256 available, uint256 totalEarned, uint256 sold, uint256 estimatedValueUSDC)
+        returns (
+            uint256 available,
+            uint256 totalEarned,
+            uint256 sold,
+            uint256 estimatedValueUSDC
+        )
     {
         uint256 earned = carbonCreditsEarned[_farmer];
         uint256 claimed = carbonCreditsClaimed[_farmer];
@@ -418,7 +507,9 @@ contract HarvestX is Ownable {
     //withdraw platform fees(only owner)
 
     //function get Impact
-    function getImpact(address farmer)
+    function getImpact(
+        address farmer
+    )
         external
         view
         returns (
@@ -466,15 +557,21 @@ contract HarvestX is Ownable {
         );
     }
 
-    function getWastehistory(address farmer) external view returns (WasteCollection[] memory) {
+    function getWastehistory(
+        address farmer
+    ) external view returns (WasteCollection[] memory) {
         return wasteHistory[farmer];
     }
 
-    function getWorkerPayments(address farmer) external view returns (WorkerPayment[] memory) {
+    function getWorkerPayments(
+        address farmer
+    ) external view returns (WorkerPayment[] memory) {
         return workerPayments[farmer];
     }
 
-    function getCorporatePurchases(address _buyer) external view returns (uint256) {
+    function getCorporatePurchases(
+        address _buyer
+    ) external view returns (uint256) {
         return corporateCreditsPurchased[_buyer];
     }
 
@@ -487,7 +584,9 @@ contract HarvestX is Ownable {
 
     //helper functions
     //_tonsCO2 is in the hundreths ( e.g 1.5 tons = 150)
-    function calculatePriceInUSDC(uint256 _tonsCO2) external view returns (uint256 priceUSD, uint256 priceUSDC) {
+    function calculatePriceInUSDC(
+        uint256 _tonsCO2
+    ) external view returns (uint256 priceUSD, uint256 priceUSDC) {
         uint256 pricePerTonUSD = priceOracle.getCarbonCreditPricePerTon();
         //total price:(_tonsCO2/100) gives the actual tons
         priceUSD = (_tonsCO2 * pricePerTonUSD) / 100;
