@@ -4,6 +4,45 @@ HarvestX is a waste-to-value blockchain application for recording organic-waste 
 
 The repository is an MVP built for **Ethereum Sepolia**. It combines Solidity smart contracts managed with Foundry and a Next.js frontend using wagmi, viem, and RainbowKit. The deployed Sepolia version uses `MockUSDC` and `MockPriceOracle`; it is not a production carbon-credit registry or a real investment product.
 
+## Table of contents
+
+- [What HarvestX does](#what-harvestx-does)
+- [Protocol flow](#protocol-flow)
+  - [Contract rules and economics](#contract-rules-and-economics)
+- [Contract architecture](#contract-architecture)
+- [Repository layout](#repository-layout)
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [1. Clone the repository](#1-clone-the-repository)
+  - [2. Install contract dependencies and verify the build](#2-install-contract-dependencies-and-verify-the-build)
+  - [3. Install frontend dependencies](#3-install-frontend-dependencies)
+  - [4. Configure the frontend](#4-configure-the-frontend)
+  - [5. Configure deployment variables](#5-configure-deployment-variables)
+- [Run the project locally](#run-the-project-locally)
+  - [Contract development](#contract-development)
+  - [Frontend development](#frontend-development)
+- [Sepolia deployment](#sepolia-deployment)
+  - [Deploy the complete stack](#deploy-the-complete-stack)
+  - [Update an existing deployment](#update-an-existing-deployment)
+  - [Fund redemption reserves](#fund-redemption-reserves)
+  - [Current Sepolia deployment](#current-sepolia-deployment)
+- [Using the application](#using-the-application)
+  - [Farmer workflow](#farmer-workflow)
+  - [Buyer workflow](#buyer-workflow)
+  - [Redemption workflow](#redemption-workflow)
+  - [Administrator workflow](#administrator-workflow)
+- [Frontend routes](#frontend-routes)
+- [Testing and verification](#testing-and-verification)
+- [Troubleshooting](#troubleshooting)
+  - [`transaction gas limit too high`](#transaction-gas-limit-too-high)
+  - [Wrong contract address or failed faucet](#wrong-contract-address-or-failed-faucet)
+  - [`Insufficient credits`](#insufficient-credits)
+  - [`Insufficient USDC amount`](#insufficient-usdc-amount)
+  - [`Insufficient USDC in contract`](#insufficient-usdc-in-contract)
+  - [WalletConnect project missing](#walletconnect-project-missing)
+  - [Foundry dependency errors](#foundry-dependency-errors)
+- [Authors](#authors)
+
 ## What HarvestX does
 
 HarvestX connects four activities:
