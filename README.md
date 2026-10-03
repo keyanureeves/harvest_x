@@ -971,7 +971,14 @@ forge build
 
 ## Demo
 
-There is no public demo deployment yet. Run the project locally and open [http://localhost:3000](http://localhost:3000) against the Sepolia deployment listed above.
+Live app: **https://harvestx-nu.vercel.app/**
+
+It runs against the Sepolia deployment listed above. To click through the farmer
+flow without funding a wallet or waiting on a faucet, import one of the
+pre-configured wallets from [Demo Farmer Wallets](#demo-farmer-wallets).
+
+To run it yourself instead, follow Setup Instructions and open
+[http://localhost:3000](http://localhost:3000).
 
 ---
 
