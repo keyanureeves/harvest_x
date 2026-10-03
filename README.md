@@ -1,5 +1,7 @@
 # HarvestX
 
+**Live app: https://harvestx-nu.vercel.app/**
+
 HarvestX is a blockchain-based incentivization platform that transforms organic waste management into a profitable, transparent, and environmentally sustainable operation. Farmers earn tokenized rewards (HX, symbol `HXT`) and tradable carbon credits for processing organic waste, creating a circular economy that benefits both the environment and local communities.
 
 The repository is an MVP built for **Ethereum Sepolia**. It combines Solidity smart contracts managed with Foundry and a Next.js frontend using wagmi, viem, and RainbowKit. The deployed Sepolia version uses `MockUSDC` and `MockPriceOracle`; it is not a production carbon-credit registry or a real investment product.
@@ -552,6 +554,9 @@ pre-configured on Sepolia ahead of time. Import one and the farmer flow is
 unlocked immediately, with no setup and nothing to fund.
 
 Each wallet is already funded with 0.05 Sepolia ETH, registered, and verified.
+
+Live app: https://harvestx-nu.vercel.app/ — connect one of these wallets and the
+farmer flow is ready to use.
 
 > These private keys are published here on purpose, so anyone can try the demo
 > without asking you for anything. That also means anyone can act as these

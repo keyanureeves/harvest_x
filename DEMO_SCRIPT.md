@@ -3,6 +3,11 @@
 Runtime: ~2:50 at 145 wpm (424 words). Paste the narration blocks into a
 teleprompter, or read them over screen recordings of the Sepolia deployment.
 
+Live app: **https://harvestx-nu.vercel.app/**
+
+Demo farmer wallets (pre-funded, registered and verified, import into MetaMask
+and connect): see [Demo Farmer Wallets](README.md#demo-farmer-wallets).
+
 Deployments referenced (Sepolia):
 
 - HarvestX 0x0bb5B927aED4FE97483b0bF72AD9999Fd9BB3195
@@ -22,7 +27,8 @@ change that.
 
 ## [0:25] WHAT IT IS
 
-_Show: landing page, scroll to the four connected activities._
+_Show: https://harvestx-nu.vercel.app/ — landing page, scroll to the four
+connected activities._
 
 HarvestX turns farm waste into two real assets: reward tokens and
 verified carbon credits. A farmer registers, logs the organic waste they
