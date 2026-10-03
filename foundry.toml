@@ -3,6 +3,9 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
+# Demo tester onboarding reads the generated keypair CSV (script/OnboardTesters.s.sol)
+fs_permissions = [{ access = "read", path = "./" }]
+
 remappings = [
     '@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/',
 ]

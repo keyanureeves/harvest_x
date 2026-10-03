@@ -34,6 +34,11 @@ The repository is an MVP built for **Ethereum Sepolia**. It combines Solidity sm
   - [4. Contract Addresses](#4-contract-addresses)
   - [5. Deploy Contracts](#5-deploy-contracts)
   - [6. Run the Development Server](#6-run-the-development-server)
+- [Demo Farmer Wallets](#demo-farmer-wallets)
+  - [Importing a wallet into MetaMask](#importing-a-wallet-into-metamask)
+  - [What to try](#what-to-try)
+  - [Troubleshooting](#troubleshooting)
+  - [Regenerating the list](#regenerating-the-list)
 - [Usage Guide](#usage-guide)
   - [For Farmers](#for-farmers)
   - [For Corporations](#for-corporations)
@@ -536,6 +541,107 @@ npm start
 ```
 
 `npm start` serves an existing production build. Run `npm run build` first.
+
+---
+
+## Demo Farmer Wallets
+
+Anyone connecting their own wallet can register and log waste, but redemption
+requires `verifyFarmer`, which is `onlyOwner`. So the five wallets below were
+pre-configured on Sepolia ahead of time. Import one and the farmer flow is
+unlocked immediately, with no setup and nothing to fund.
+
+Each wallet is already funded with 0.05 Sepolia ETH, registered, and verified.
+
+> These private keys are published here on purpose, so anyone can try the demo
+> without asking you for anything. That also means anyone can act as these
+> farmers. Keep them on Sepolia, never send them anything of real value, and
+> rotate them with `make demo-wallets && make onboard-testers-sepolia` if they
+> get abused.
+
+| Address | Private key | Label |
+| --- | --- | --- |
+| `0x76316019BAC3b1911BE490B99856E4899295E6C1` | `0xb3dadaa6f7c1206058b62ed11427697eb155db6619756af602cf8cae8d2b3190` | demo-farmer-1 |
+| `0xDACE667c83A78771Ff4719b1E6d546f1f8493Af1` | `0x48fc8e5035cf8f14d3703d8ac0c02b3cf772d644d61fd3abacf2c3452473dfe5` | demo-farmer-2 |
+| `0x94463f98796DB67A8Cb158B7908A9D11eC44335f` | `0xd4268f22a3c45a124efb9144f2bff2566237568592e100ba2fae86df639caa38` | demo-farmer-3 |
+| `0x6f1D1519d8e962a3ABbB404F197c6C1607FaF874` | `0xe549b4f700e202600eafc94d97f2ced904abbe79e6e185bb1c3c4766f495a1e1` | demo-farmer-4 |
+| `0x201981a964d0EBa2348Ff3faa381AA541634f917` | `0xce9bb5cb272eb2a05e2bc74e1e504bfd50f9c4f834ef08cc79713f3e46094267` | demo-farmer-5 |
+
+Verify any of them yourself:
+
+```bash
+cast call 0x0bb5B927aED4FE97483b0bF72AD9999Fd9BB3195 'verifiedFarmers(address)(bool)' <address> \
+  --rpc-url <your-sepolia-rpc-url>
+```
+
+### Importing a wallet into MetaMask
+
+A website cannot add an account to MetaMask, so this step is always manual.
+
+1. Open MetaMask, click the round account icon in the top-right corner.
+2. Choose **Import account** under "My accounts". Do **not** choose "Connect" —
+   Connect only links an account you already have.
+3. Select **Private key** and paste the key from the table above. It starts with
+   `0x` and is 66 characters. No extra spaces or quotes.
+4. Choose a MetaMask password, which encrypts the key locally on your machine.
+5. Click **Import**.
+
+Then switch MetaMask to Sepolia, or transactions will fail:
+
+1. Click the network name at the top of the popup.
+2. If **Sepolia** is listed, select it. Otherwise click **Show test networks**.
+3. If there is no toggle, use **Add network** → **Add network manually**:
+
+   | Field | Value |
+   | --- | --- |
+   | Network name | `Sepolia` |
+   | RPC URL | `https://ethereum-sepolia-rpc.publicnode.com` |
+   | Chain ID | `11155111` |
+   | Currency symbol | `ETH` |
+   | Block explorer | `https://sepolia.etherscan.io` |
+
+Finally open the app, click **Connect wallet**, choose **MetaMask**, and confirm
+the account shown matches the address you imported.
+
+### What to try
+
+1. **Dashboard** — confirm the farmer shows as registered and verified.
+2. **Process waste** — log a collection. Minimum 10 kg. Try 50 kg of coffee
+   husks, 3 workers, 5000 KES paid. You receive HX tokens and carbon credits at
+   1 HX per 10 kg and 400 g CO2 avoided per kg.
+3. **Carbon credits** — look up the farmer address to see available credits and
+   their estimated USDC value.
+4. **Buy credits** — the buyer flow needs mock USDC, which the token hands out
+   itself via `quickFaucet`. Approve HarvestX, then buy.
+5. **Balance** — redeem HX for USDC 1:1. Tokens are burned on redemption.
+
+### Troubleshooting
+
+**"Wrong network", or a transaction fails instantly.** MetaMask is not on
+Sepolia. Redo the network step.
+
+**"Farmer not verified" or "Not registered".** The wrong account is connected.
+Compare the address in MetaMask against the table.
+
+**"Insufficient funds for gas".** The 0.05 ETH is spent. Use a different wallet
+from the table rather than topping up from a public faucet.
+
+**"Insufficient USDC in contract" when redeeming.** The contract's USDC reserve
+is shared by everyone and can be drained by `buyCarbonCredits`. Refill it with
+`make fund-harvestx-usdc-sepolia`.
+
+### Regenerating the list
+
+```bash
+make demo-wallets COUNT=5 LABEL=demo-farmer   # new keys, new addresses
+make onboard-testers-sepolia                 # fund + register + verify them
+cat demo-testers.csv                         # replace the table above
+```
+
+Keys land in `demo-testers.keys.csv`, which is gitignored. Both make targets
+abort if that file is ever tracked by git, and `OnboardTesters` refuses to
+onboard the contract owner, since that key controls `verifyFarmer`,
+`withdrawPlatformFees` and `renounceOwnership`.
 
 ---
 

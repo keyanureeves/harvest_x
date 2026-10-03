@@ -18,3 +18,9 @@ docs/
 .env
 .env.*
 !.env.example
+
+# Demo tester wallets - contains live private keys, Sepolia only, never commit
+demo-testers.keys.csv
+demo-testers*.csv
+keystores/
+*.keystore
